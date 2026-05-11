@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
+import { Pencil, X } from 'lucide-vue-next';
 
 interface Todo {
     id: number;
@@ -19,6 +20,10 @@ defineProps<{
 
 const newTitle = ref('');
 const newDescription = ref('');
+
+const editingTodo = ref<Todo | null>(null);
+const editTitle = ref('');
+const editDescription = ref('');
 
 const createTodo = () => {
     if (!newTitle.value.trim()) return;
@@ -44,6 +49,31 @@ const deleteTodo = (todo: Todo) => {
     if (!confirm('Are you sure you want to delete this todo?')) return;
     
     router.delete(`/todos/${todo.id}`);
+};
+
+const startEditing = (todo: Todo) => {
+    editingTodo.value = todo;
+    editTitle.value = todo.title;
+    editDescription.value = todo.description || '';
+};
+
+const cancelEditing = () => {
+    editingTodo.value = null;
+    editTitle.value = '';
+    editDescription.value = '';
+};
+
+const saveEdit = (todo: Todo) => {
+    if (!editTitle.value.trim()) return;
+    
+    router.put(`/todos/${todo.id}`, {
+        title: editTitle.value,
+        description: editDescription.value,
+    }, {
+        onSuccess: () => {
+            cancelEditing();
+        },
+    });
 };
 </script>
 
@@ -108,7 +138,48 @@ const deleteTodo = (todo: Todo) => {
                             :key="todo.id"
                             class="px-6 py-4 hover:bg-muted/50 transition-colors"
                         >
-                            <div class="flex items-start justify-between gap-4">
+                            <!-- Edit Mode -->
+                            <div v-if="editingTodo && editingTodo.id === todo.id" class="space-y-3">
+                                <div>
+                                    <label :for="`edit-title-${todo.id}`" class="block text-sm font-medium text-foreground mb-1">
+                                        Title
+                                    </label>
+                                    <input
+                                        :id="`edit-title-${todo.id}`"
+                                        v-model="editTitle"
+                                        type="text"
+                                        class="w-full px-4 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors text-foreground bg-background placeholder-muted-foreground"
+                                    />
+                                </div>
+                                <div>
+                                    <label :for="`edit-description-${todo.id}`" class="block text-sm font-medium text-foreground mb-1">
+                                        Description
+                                    </label>
+                                    <textarea
+                                        :id="`edit-description-${todo.id}`"
+                                        v-model="editDescription"
+                                        rows="3"
+                                        class="w-full px-4 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors resize-none text-foreground bg-background placeholder-muted-foreground"
+                                    ></textarea>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button
+                                        @click="saveEdit(todo)"
+                                        class="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
+                                    >
+                                        Save
+                                    </button>
+                                    <button
+                                        @click="cancelEditing"
+                                        class="bg-muted hover:bg-muted/90 text-foreground font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- View Mode -->
+                            <div v-else class="flex items-start justify-between gap-4">
                                 <div class="flex items-start gap-3 flex-1">
                                     <button
                                         @click="toggleComplete(todo)"
@@ -153,20 +224,29 @@ const deleteTodo = (todo: Todo) => {
                                         </p>
                                     </div>
                                 </div>
-                                <button
-                                    @click="deleteTodo(todo)"
-                                    class="flex-shrink-0 p-2 text-muted-foreground hover:text-destructive transition-colors"
-                                    title="Delete todo"
-                                >
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                        />
-                                    </svg>
-                                </button>
+                                <div class="flex items-center gap-1">
+                                    <button
+                                        @click="startEditing(todo)"
+                                        class="flex-shrink-0 p-2 text-muted-foreground hover:text-primary transition-colors"
+                                        title="Edit todo"
+                                    >
+                                        <Pencil class="w-5 h-5" />
+                                    </button>
+                                    <button
+                                        @click="deleteTodo(todo)"
+                                        class="flex-shrink-0 p-2 text-muted-foreground hover:text-destructive transition-colors"
+                                        title="Delete todo"
+                                    >
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </li>
                     </ul>

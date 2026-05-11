@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-vue-next';
+import { BookOpen, FolderGit2, LayoutGrid, Moon, Sun } from 'lucide-vue-next';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
+import { useAppearance } from '@/composables/useAppearance';
 
 const mainNavItems: NavItem[] = [
     {
@@ -37,6 +38,12 @@ const footerNavItems: NavItem[] = [
         icon: BookOpen,
     },
 ];
+
+const { resolvedAppearance, updateAppearance } = useAppearance();
+
+const toggleTheme = () => {
+    updateAppearance(resolvedAppearance.value === 'dark' ? 'light' : 'dark');
+};
 </script>
 
 <template>
@@ -59,6 +66,20 @@ const footerNavItems: NavItem[] = [
 
         <SidebarFooter>
             <NavFooter :items="footerNavItems" />
+            <!-- Theme Toggle Button -->
+            <div class="px-2 py-2">
+                <button
+                    @click="toggleTheme"
+                    class="flex items-center gap-3 w-full px-2 py-2 text-sm font-medium rounded-lg hover:bg-muted transition-colors text-foreground"
+                    title="Toggle theme"
+                >
+                    <component 
+                        :is="resolvedAppearance === 'dark' ? Sun : Moon" 
+                        class="w-5 h-5"
+                    />
+                    <span>{{ resolvedAppearance === 'dark' ? 'Light Mode' : 'Dark Mode' }}</span>
+                </button>
+            </div>
             <NavUser />
         </SidebarFooter>
     </Sidebar>
