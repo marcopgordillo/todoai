@@ -49,16 +49,16 @@ const deleteTodo = (todo: Todo) => {
 
 <template>
     <AppLayout title="My Todos">
-        <div class="min-h-screen bg-gray-50 py-8">
+        <div class="min-h-screen bg-background py-8">
             <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-8">My Todo List</h1>
+                <h1 class="text-3xl font-bold text-foreground mb-8">My Todo List</h1>
 
                 <!-- Create Todo Form -->
-                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Add New Todo</h2>
+                <div class="bg-card rounded-lg shadow-md p-6 mb-6 border border-border">
+                    <h2 class="text-xl font-semibold text-foreground mb-4">Add New Todo</h2>
                     <form @submit.prevent="createTodo" class="space-y-4">
                         <div>
-                            <label for="title" class="block text-sm font-medium text-gray-700 mb-1">
+                            <label for="title" class="block text-sm font-medium text-foreground mb-1">
                                 Title *
                             </label>
                             <input
@@ -66,11 +66,11 @@ const deleteTodo = (todo: Todo) => {
                                 v-model="newTitle"
                                 type="text"
                                 placeholder="What needs to be done?"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                class="w-full px-4 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors text-foreground bg-background placeholder-muted-foreground"
                             />
                         </div>
                         <div>
-                            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
+                            <label for="description" class="block text-sm font-medium text-foreground mb-1">
                                 Description
                             </label>
                             <textarea
@@ -78,12 +78,12 @@ const deleteTodo = (todo: Todo) => {
                                 v-model="newDescription"
                                 rows="3"
                                 placeholder="Add some details (optional)"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors resize-none"
+                                class="w-full px-4 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors resize-none text-foreground bg-background placeholder-muted-foreground"
                             ></textarea>
                         </div>
                         <button
                             type="submit"
-                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
+                            class="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
                         >
                             Add Todo
                         </button>
@@ -91,22 +91,22 @@ const deleteTodo = (todo: Todo) => {
                 </div>
 
                 <!-- Todo List -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-xl font-semibold text-gray-800">
+                <div class="bg-card rounded-lg shadow-md overflow-hidden border border-border">
+                    <div class="px-6 py-4 border-b border-border">
+                        <h2 class="text-xl font-semibold text-foreground">
                             Your Tasks ({{ todos.length }})
                         </h2>
                     </div>
 
                     <div v-if="todos.length === 0" class="px-6 py-12 text-center">
-                        <p class="text-gray-500 text-lg">No todos yet. Add one above!</p>
+                        <p class="text-muted-foreground text-lg">No todos yet. Add one above!</p>
                     </div>
 
-                    <ul v-else class="divide-y divide-gray-200">
+                    <ul v-else class="divide-y divide-border">
                         <li
                             v-for="todo in todos"
                             :key="todo.id"
-                            class="px-6 py-4 hover:bg-gray-50 transition-colors"
+                            class="px-6 py-4 hover:bg-muted/50 transition-colors"
                         >
                             <div class="flex items-start justify-between gap-4">
                                 <div class="flex items-start gap-3 flex-1">
@@ -115,7 +115,7 @@ const deleteTodo = (todo: Todo) => {
                                         class="mt-1 flex-shrink-0 w-5 h-5 rounded border-2 transition-colors"
                                         :class="todo.completed 
                                             ? 'bg-green-500 border-green-500' 
-                                            : 'border-gray-300 hover:border-green-500'"
+                                            : 'border-input hover:border-green-500'"
                                     >
                                         <svg
                                             v-if="todo.completed"
@@ -136,26 +136,26 @@ const deleteTodo = (todo: Todo) => {
                                         <p
                                             class="text-base font-medium transition-colors"
                                             :class="todo.completed 
-                                                ? 'text-gray-400 line-through' 
-                                                : 'text-gray-900'"
+                                                ? 'text-muted-foreground line-through' 
+                                                : 'text-foreground'"
                                         >
                                             {{ todo.title }}
                                         </p>
                                         <p
                                             v-if="todo.description"
-                                            class="mt-1 text-sm text-gray-600"
-                                            :class="todo.completed ? 'text-gray-400' : ''"
+                                            class="mt-1 text-sm text-muted-foreground"
+                                            :class="todo.completed ? 'opacity-70' : ''"
                                         >
                                             {{ todo.description }}
                                         </p>
-                                        <p class="mt-1 text-xs text-gray-400">
+                                        <p class="mt-1 text-xs text-muted-foreground">
                                             Created {{ new Date(todo.created_at).toLocaleDateString() }}
                                         </p>
                                     </div>
                                 </div>
                                 <button
                                     @click="deleteTodo(todo)"
-                                    class="flex-shrink-0 p-2 text-gray-400 hover:text-red-600 transition-colors"
+                                    class="flex-shrink-0 p-2 text-muted-foreground hover:text-destructive transition-colors"
                                     title="Delete todo"
                                 >
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
