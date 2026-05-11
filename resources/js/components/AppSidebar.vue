@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid, Moon, Sun } from 'lucide-vue-next';
+import { BookOpen, CheckSquare, FolderGit2, LayoutGrid, Moon, Sun } from 'lucide-vue-next';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -14,15 +14,19 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 import { useAppearance } from '@/composables/useAppearance';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard(),
+        href: '/dashboard',
         icon: LayoutGrid,
+    },
+    {
+        title: 'Todos',
+        href: '/todos',
+        icon: CheckSquare,
     },
 ];
 
@@ -52,7 +56,7 @@ const toggleTheme = () => {
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboard()">
+                        <Link :href="'/dashboard'">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>
